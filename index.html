@@ -37,7 +37,7 @@
           </div>
           <div class="form-group">
             <label for="password">Password:</label>
-            <input id="password" type="text" placeholder="ex: Cisco123!" class="form-control"/>
+            <input id="password" type="password" placeholder="ex: Cisco123!" class="form-control"/>
           </div>
             <button type="submit" class="btn btn-primary">Send</button>
         </form>
@@ -59,12 +59,12 @@
           <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown">Example API sends
             <span class="caret"></span></button>
             <ul class="dropdown-menu">
-              <li><a href="#">host</a></li>
-              <li><a href="#">network-device</a></li>
-              <li><a href="#">network-device/config</a></li>
-              <li><a href="#">network-device/{deviceID}/config</a></li>
-              <li><a href="#">interface</a></li>
-              <li><a href="#">interface/network-device/{deviceID}</a></li>
+              <li><a href="#" onclick="moveAPI(this.textContent)">host</a></li>
+              <li><a href="#" onclick="moveAPI(this.textContent)">network-device</a></li>
+              <li><a href="#" onclick="moveAPI(this.textContent)">network-device/config</a></li>
+              <li><a href="#" onclick="moveAPI(this.textContent)">network-device/{deviceID}/config</a></li>
+              <li><a href="#" onclick="moveAPI(this.textContent)">interface</a></li>
+              <li><a href="#" onclick="moveAPI(this.textContent)">interface/network-device/{deviceID}</a></li>
               <li class="divider"></li>
               <li><a href="https://sandboxapic.cisco.com/swagger" target="_blank">List of APIs</a></li>
             </ul>
@@ -105,6 +105,13 @@
     //   document.getElementById("messages").innerHTML += JSON.stringify(msg, null, 4);
   // alert(msg);
   });
+  function moveAPI(api) {
+      //var txt=document.getElementById("m").value;
+      //txt=txt + num;
+      //var txt = api;
+      //alert(txt);
+      document.getElementById("m").value=api;
+      }
 </script>
 </body>
 </html>
