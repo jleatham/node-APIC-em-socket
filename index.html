@@ -22,7 +22,6 @@
     </style> -->
   </head>
   <body>
-    <!-- <ul id="messages"></ul> -->
     <div class="container-fluid">
       <div class="col-lg-12">
         <form id="apic_info" class="form-inline" action="">
@@ -75,6 +74,44 @@
 
     <pre id="messages"></pre>
 
+    <footer class="navbar navbar-fixed-bottom">
+      <div class="container-fluid">
+        <div class="col-lg-2 col-lg-offset-10">
+          <button class="btn btn-info" data-toggle="modal" data-target="#myModal">How does this work?</button>
+        </div>
+      </div>
+    </footer>
+
+    <div id="myModal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">APIC-EM API example</h4>
+          </div>
+          <div class="modal-body">
+            <p>This application connects to any publicly accessible APIC-EM server and displays any network information
+               via APIs.  View the source code in <a href="https://github.com/jleatham/node-APIC-em-socket" target="_blank">Github</a></p>
+            <p></p>
+            <p>On the backend, this server is running node.js (as opposed to apache) which allows for an increased
+            number of users at a time.  Node.js is an asyncronous technology (read: non-blocking) that is used
+          at some of the largest web applications (such as Netflix and Uber).  Read more at <a href="https://nodejs.org/en/" target="_blank">nodejs.org</a></p>
+          <p></p>
+          <p>Other technologies used are:</p>
+          <ul>
+            <li><a href="http://socket.io/" target="_blank">Socket.io</a> : Allows for your browser to communicate back and forth to the server.  That way the server can safely handle all API calls as opposed to your browser.</li>
+            <li><a href="https://jquery.com/" target="_blank">JQuery</a> : wide spread browser-based javascript library</li>
+          </ul>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
 
 <script src="/socket.io/socket.io.js"></script>
 <!-- <script src="http://code.jquery.com/jquery-1.11.1.js"></script> -->
@@ -106,10 +143,6 @@
   // alert(msg);
   });
   function moveAPI(api) {
-      //var txt=document.getElementById("m").value;
-      //txt=txt + num;
-      //var txt = api;
-      //alert(txt);
       document.getElementById("m").value=api;
       }
 </script>
