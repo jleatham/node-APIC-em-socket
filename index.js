@@ -24,7 +24,7 @@ e_ticket.on('update', function () {
     serviceTicket = e_ticket.info.response.serviceTicket;
     console.log("Service Ticket: ");
     console.log(serviceTicket);
-    io.emit('chat message', serviceTicket); //displays ticket in HTML page
+    io.emit('chat message', "Success, authentication token: "+ serviceTicket); //displays ticket in HTML page
 });
 
 json_response.on('update', function () {

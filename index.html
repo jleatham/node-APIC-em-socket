@@ -26,6 +26,7 @@
     <div class="container-fluid">
       <div class="col-lg-12">
         <form id="apic_info" class="form-inline" action="">
+          <span class="label label-info">Step 1: Authenticate</span>
           <div class="form-group">
             <label for="url">APIC-EM URL:port</label>
             <input id="url" type="text" placeholder="ex: sandboxapic.cisco.com:9443" class="form-control" style="width: 250px"/>
@@ -38,19 +39,36 @@
             <label for="password">Password:</label>
             <input id="password" type="text" placeholder="ex: Cisco123!" class="form-control"/>
           </div>
-            <button type="submit" class="btn btn-default">Send</button>
+            <button type="submit" class="btn btn-primary">Send</button>
         </form>
       </div>
     </div>
     <div class="container-fluid">
-      <div class="col-md-6 col-md-offset-3">
+      <div class="col-lg-7">
         <form id="send" action="" class="form-inline">
+          <span class="label label-info">Step 2: Send API command</span>
           <div class="form-group">
             <label for="api">Enter GET API.</label>
             <input id="m" autocomplete="off" class="form-control" placeholder="Example: for /api/v1/host just enter host" style="width: 400px"/>
           </div>
-            <button type="submit" class="btn btn-default">Send</button>
+            <button type="submit" class="btn btn-primary">Send</button>
         </form>
+      </div>
+      <div class="col-lg-2">
+        <div class="dropdown">
+          <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown">Example API sends
+            <span class="caret"></span></button>
+            <ul class="dropdown-menu">
+              <li><a href="#">host</a></li>
+              <li><a href="#">network-device</a></li>
+              <li><a href="#">network-device/config</a></li>
+              <li><a href="#">network-device/{deviceID}/config</a></li>
+              <li><a href="#">interface</a></li>
+              <li><a href="#">interface/network-device/{deviceID}</a></li>
+              <li class="divider"></li>
+              <li><a href="https://sandboxapic.cisco.com/swagger" target="_blank">List of APIs</a></li>
+            </ul>
+          </div>
       </div>
     </div>
 
