@@ -79,6 +79,8 @@ var getJSON = function(api_url,output){
     }
     else {
       console.log("inside callback error");
+      output.info = "API error";
+      output.emit('update');
       //console.log(error);
       //console.log(response);
       //console.log(body);
