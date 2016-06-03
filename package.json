@@ -1,5 +1,5 @@
 {
-  "name": "socketio",
+  "name": "node-apic-em-socket",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -15,5 +15,18 @@
     "socket.io": "^1.4.6"
   },
   "devDependencies": {},
-  "description": ""
+  "description": "example app to call APIC-EM APIs using node.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jleatham/node-APIC-em-socket.git"
+  },
+  "keywords": [
+    "node.js",
+    "APIC-EM",
+    "socket.io"
+  ],
+  "bugs": {
+    "url": "https://github.com/jleatham/node-APIC-em-socket/issues"
+  },
+  "homepage": "https://github.com/jleatham/node-APIC-em-socket#readme"
 }
