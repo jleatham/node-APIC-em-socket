@@ -21,10 +21,19 @@ var token ='';
 //eventEmitter data for auth ticket that is finalized when asyncronous API calls are completed
 e_ticket.on('update', function () {
     //console.log(body1.info.response.serviceTicket); // HOORAY! THIS WORKS!
-    serviceTicket = e_ticket.info.response.serviceTicket;
-    console.log("Service Ticket: ");
-    console.log(serviceTicket);
-    io.emit('chat message', "Success, authentication token: "+ serviceTicket); //displays ticket in HTML page
+
+    if (e_ticket.info != "ERROR"){
+      serviceTicket = e_ticket.info.response.serviceTicket;
+      console.log("Service Ticket: ");
+      console.log(serviceTicket);
+      io.emit('chat message', "Success, authentication token: "+ serviceTicket); //displays ticket in HTML page
+    }
+    else{
+      console.log("error");
+      //console.log(serviceTicket);
+      io.emit('chat message', "Error in authentication. Try again."); //displays ticket in HTML page
+    }
+
 });
 
 json_response.on('update', function () {
@@ -56,7 +65,9 @@ function get_ticket(t_url,user,pswd,output) {
        else {
            //console.log(response.statusCode);
            console.log("inside callback POST ticket error");
-           console.log(error);
+           //console.log(JSON.parse(body));
+           output.info = "ERROR";
+           output.emit('update');
        } //end of outer if
    }); //end of request.post
    //return serviceTicket;
