@@ -31,14 +31,16 @@ e_ticket.on('update', function () {
     else{
       console.log("error");
       //console.log(serviceTicket);
-      io.emit('chat message', "Error in authentication. Try again."); //displays ticket in HTML page
+      io.emit('chat message', "Error in authentication token. Try again."); //displays ticket in HTML page
     }
 
 });
 
 json_response.on('update', function () {
     //console.log(body1.info.response.serviceTicket); // HOORAY! THIS WORKS!
-    resp = json_response.info;
+    //resp = JSON.stringify(json_response.info.response, null, 4);
+    resp = json_response.info.response;
+    //console.log("resp = "+ resp);
     io.emit('chat message', resp); //displays ticket in HTML page
 });
 
@@ -84,7 +86,8 @@ var getJSON = function(api_url,output){
   };
   request.get(options, function(error, response, body){
     if (!error && response.statusCode == 200) {
-      output.info = JSON.stringify(JSON.parse(body), null, 4)
+      //output.info = JSON.stringify(JSON.parse(body), null, 4)
+      output.info = JSON.parse(body);
       output.emit('update');
       console.log("inside success");
     }

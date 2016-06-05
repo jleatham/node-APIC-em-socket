@@ -4,75 +4,123 @@
     <title>APIC-EM APIs with Node.js</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 
-    <!-- jQuery library -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
-
-    <!-- Latest compiled JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-  <!--  <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font: 13px Helvetica, Arial; }
-    //  form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-      form { background: yellow; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
-      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
-      #messages { list-style-type: none; margin: 0; padding: 0; }
-      #messages li { padding: 5px 10px; }
-      #messages li:nth-child(odd) { background: #eee; }
-    </style> -->
   </head>
   <body>
+    <div class="container">
+      <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#Authenticate">Authenticate</a></li>
+        <li><a data-toggle="tab" href="#API">Send APIs</a></li>
+      </ul>
+
+      <div class="tab-content">
+        <div id="Authenticate" class="tab-pane fade in active">
+          <h3>Step 1: Authenticate</h3>
+          <form id="apic_info" class="form-horizontal" action="">
+            <!-- <span class="label label-info">Step 1: Authenticate</span> -->
+            <div class="form-group">
+              <label for="url" class="col-sm-2 control-label">APIC-EM URL:port</label>
+              <div class="col-sm-10">
+                <input id="url" type="text" autocapitalize="none" placeholder="ex: sandboxapic.cisco.com:9443" class="form-control"/>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="username" class="col-sm-2 control-label">Username:</label>
+              <div class="col-sm-10">
+                <input id="username" type="text" autocapitalize="none" placeholder="ex: devnetuser" class="form-control"/>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="password" class="col-sm-2 control-label">Password:</label>
+              <div class="col-sm-10">
+                <input id="password" type="password" placeholder="ex: Cisco123!" class="form-control"/>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-2">
+                <button type="submit" class="btn btn-primary">Authenticate</button>
+              </div>
+              <div class="col-sm-1">
+                <p>or</p>
+              </div>
+              <div class="col-sm-1">
+                <button id="sandbox" onclick="sendSandbox()" type="button" class="btn btn-info">Use Sandbox</button>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div id="API" class="tab-pane fade">
+          <h3>Step 2: Send API calls to APIC-EM</h3>
+          <form id="send" action="" class="form-horizontal">
+            <!-- <span class="label label-info">Step 2: Send API command</span> -->
+            <div class="form-group">
+              <label for="api" class="col-sm-2 control-label">Enter GET API.</label>
+              <div class="col-sm-10">
+                <input id="m" autocomplete="off" class="form-control" placeholder="Example: for /api/v1/host just enter host"/>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-1">
+                <button type="submit" class="btn btn-primary">Send</button>
+              </div>
+              <div class="dropdown col-sm-2">
+                <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown">Example API sends
+                  <span class="caret"></span></button>
+                  <ul class="dropdown-menu">
+                    <li><a href="#" onclick="moveAPI(this.textContent)">host</a></li>
+                    <li><a href="#" onclick="moveAPI(this.textContent)">network-device</a></li>
+                    <li><a href="#" onclick="moveAPI(this.textContent)">network-device/config</a></li>
+                    <li><a href="#" onclick="moveAPI(this.textContent)">network-device/{deviceID}/config</a></li>
+                    <li><a href="#" onclick="moveAPI(this.textContent)">interface</a></li>
+                    <li><a href="#" onclick="moveAPI(this.textContent)">interface/network-device/{deviceID}</a></li>
+                    <li class="divider"></li>
+                    <li><a href="https://sandboxapic.cisco.com/swagger" target="_blank">List of APIs</a></li>
+                  </ul>
+                </div>
+              <div class="col-sm-2">
+                <div class="radio-inline">
+                <label>
+                  <input type="radio" name="optionsRadios" id="rawRadio" value="option1" checked>
+                  Raw JSON
+                </label>
+                </div>
+                <div class="radio-inline">
+                  <label>
+                    <input type="radio" name="optionsRadios" id="tableRadio" value="option2">
+                    Table
+                  </label>
+              </div>
+              </div>
+          </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+
+
     <div class="container-fluid">
       <div class="col-lg-12">
-        <form id="apic_info" class="form-inline" action="">
-          <span class="label label-info">Step 1: Authenticate</span>
-          <div class="form-group">
-            <label for="url">APIC-EM URL:port</label>
-            <input id="url" type="text" autocapitalize="none" placeholder="ex: sandboxapic.cisco.com:9443" class="form-control" style="width: 250px"/>
-          </div>
-          <div class="form-group">
-            <label for="username">Username:</label>
-            <input id="username" type="text" autocapitalize="none" placeholder="ex: devnetuser" class="form-control"/>
-          </div>
-          <div class="form-group">
-            <label for="password">Password:</label>
-            <input id="password" type="password" placeholder="ex: Cisco123!" class="form-control"/>
-          </div>
-            <button type="submit" class="btn btn-primary">Send</button>
-        </form>
+
       </div>
     </div>
     <div class="container-fluid">
       <div class="col-lg-7">
-        <form id="send" action="" class="form-inline">
-          <span class="label label-info">Step 2: Send API command</span>
-          <div class="form-group">
-            <label for="api">Enter GET API.</label>
-            <input id="m" autocomplete="off" class="form-control" placeholder="Example: for /api/v1/host just enter host" style="width: 400px"/>
-          </div>
-            <button type="submit" class="btn btn-primary">Send</button>
-        </form>
+
       </div>
-      <div class="col-lg-2">
-        <div class="dropdown">
-          <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown">Example API sends
-            <span class="caret"></span></button>
-            <ul class="dropdown-menu">
-              <li><a href="#" onclick="moveAPI(this.textContent)">host</a></li>
-              <li><a href="#" onclick="moveAPI(this.textContent)">network-device</a></li>
-              <li><a href="#" onclick="moveAPI(this.textContent)">network-device/config</a></li>
-              <li><a href="#" onclick="moveAPI(this.textContent)">network-device/{deviceID}/config</a></li>
-              <li><a href="#" onclick="moveAPI(this.textContent)">interface</a></li>
-              <li><a href="#" onclick="moveAPI(this.textContent)">interface/network-device/{deviceID}</a></li>
-              <li class="divider"></li>
-              <li><a href="https://sandboxapic.cisco.com/swagger" target="_blank">List of APIs</a></li>
-            </ul>
-          </div>
+      <div class="col-lg-2 col-lg-offset-3">
+
       </div>
     </div>
 
+    <div class="container-fluid">
+      <div class="col-lg-12">
+        <table id="excelDataTable" class="table">
+        </table>
+      </div>
+    </div>
 
     <pre id="messages"></pre>
+
 
     <footer class="navbar navbar-fixed-bottom">
       <div class="container-fluid">
@@ -97,7 +145,7 @@
             <p></p>
             <p>On the backend, this server is running node.js (as opposed to apache) which allows for an increased
             number of users at a time.  Node.js is an asyncronous technology (read: non-blocking) that is used
-          at some of the largest web applications (such as Netflix and Uber).  Read more at <a href="https://nodejs.org/en/" target="_blank">nodejs.org</a></p>
+          on some of the largest web applications (such as Netflix and Uber).  Read more at <a href="https://nodejs.org/en/" target="_blank">nodejs.org</a></p>
           <p></p>
           <p>Other technologies used are:</p>
           <ul>
@@ -116,6 +164,11 @@
 <script src="/socket.io/socket.io.js"></script>
 <!-- <script src="http://code.jquery.com/jquery-1.11.1.js"></script> -->
 <!-- Latest compiled and minified CSS -->
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
 <script>
   var socket = io();
@@ -129,22 +182,80 @@
   });
   $('#apic_info').submit(function(){
     socket.emit('APIC info', $('#url').val(), $('#username').val(), $('#password').val());
-    //alert("emit sent");
      $('#url').val('');
      $('#username').val('');
      $('#password').val('');
 
     return false;
   });
+
+  function sendSandbox(){
+    socket.emit('APIC info', "sandboxapic.cisco.com:9443", "devnetuser", "Cisco123!");
+    //alert("emit sent");
+
+    return false;
+  };
+  var myList = [];
+
   socket.on('chat message', function(msg){
-    document.getElementById("messages").innerHTML = msg + "<br>";
-   //  document.getElementById("messages").innerHTML += JSON.stringify(msg, null, 4) + "<br>";
-    //   document.getElementById("messages").innerHTML += JSON.stringify(msg, null, 4);
-  // alert(msg);
+    $("#excelDataTable").empty();
+    $("#messages").empty();
+    if (document.getElementById('tableRadio').checked){
+        //alert(msg);
+        myList = msg;
+        //alert(myList);
+        buildHtmlTable();
+    }
+    else {
+        //document.getElementById("messages").innerHTML = msg + "<br>";
+         document.getElementById("messages").innerHTML = JSON.stringify(msg, null, 4) + "<br>";
+        //   document.getElementById("messages").innerHTML += JSON.stringify(msg, null, 4);
+    }
+
   });
   function moveAPI(api) {
       document.getElementById("m").value=api;
       }
+
+  function buildHtmlTable() {
+      //alert("in htmltablebuild");
+
+      var columns = addAllColumnHeaders(myList);
+      for (var i = 0 ; i < myList.length ; i++) {
+          var row$ = $('<tr/>');
+          for (var colIndex = 0 ; colIndex < columns.length ; colIndex++) {
+              var cellValue = myList[i][columns[colIndex]];
+
+              if (cellValue == null) { cellValue = ""; }
+
+              row$.append($('<td/>').html(cellValue));
+          }
+          $("#excelDataTable").append(row$);
+      }
+  }
+
+  // Adds a header row to the table and returns the set of columns.
+  // Need to do union of keys from all records as some records may not contain
+  // all records
+  function addAllColumnHeaders(myList)
+  {
+      //alert("in columnbuild");
+      var columnSet = [];
+      var headerTr$ = $('<tr/>');
+      for (var i = 0 ; i < myList.length ; i++) {
+          var rowHash = myList[i];
+          for (var key in rowHash) {
+              if ($.inArray(key, columnSet) == -1){
+                  columnSet.push(key);
+                  headerTr$.append($('<th/>').html(key));
+              }
+          }
+      }
+      $("#excelDataTable").append(headerTr$);
+
+      return columnSet;
+  }
+
 </script>
 </body>
 </html>
