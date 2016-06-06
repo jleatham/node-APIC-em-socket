@@ -158,7 +158,7 @@ io.on('connection', function(socket){
 
   });
   socket.on('APIC info', function(url, username, password) {
-
+      console.log("apic info call");
       var ticket_url = 'https://'+url+'/api/v1/ticket';
       get_ticket(ticket_url,username,password,e_ticket,socket.id);
       apicem_ip = url;
