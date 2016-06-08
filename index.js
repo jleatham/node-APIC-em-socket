@@ -1,13 +1,21 @@
-var app = require('express')();
+var express = require('express');
+var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 //var fs = require("fs");
 //var Promise = require("bluebird"); //not used yet
 var EventEmitter = require("events").EventEmitter;
-
-var express = require('express');
 var request = require('request');
-// var app = express();
+
+app.set('views','./views');
+app.set('view engine', 'pug');
+app.get('/', function (req, res) {
+  res.render('index', { title: 'APIC-EM APIs with Node.js'});
+  });
+//app.get('/', function(req, res){
+//    res.sendFile(__dirname + '/index.html');
+//  });
+
 var apicem_ip = ""; //used to be static: sandboxapic.cisco.com:9443
 //app.locals.apicem_user = "";
 //app.locals.apicem_pass = "";
@@ -39,7 +47,7 @@ e_ticket.on('update', function () {
     else{
       console.log("error");
       //console.log(serviceTicket);
-      io.emit('chat message', "Error in authentication token. Try again."); //displays ticket in HTML page
+      io.sockets.connected[e_ticket.socketID].emit('chat message', "Error in authentication token. Try again."); //displays ticket in HTML page
     }
 
 });
@@ -84,7 +92,7 @@ function get_ticket(t_url,user,pswd,output,socketID) {
        } //end of outer if
    }); //end of request.post
    //return serviceTicket;
-}
+};
 
 var getJSON = function(api_url,output,socketID,sTicket){
   //console.log("In getJSON");
@@ -116,16 +124,14 @@ var getJSON = function(api_url,output,socketID,sTicket){
     }
   });
 
-}
+};
 
 
 
 //get_ticket(ticket_url,"admin","C!sc0123");
 // console.log(token);
 
-app.get('/', function(req, res){
-    res.sendFile(__dirname + '/index.html');
-//});
+
 
 //var listOfSockets = {};
 
@@ -134,8 +140,8 @@ io.on('connection', function(socket){
   //console.log("io.id="+io.id);
   console.log("socket.id="+socket.id);
   console.log("Number of connected clients: "+io.engine.clientsCount);
-  socket.emit('socketCount',io.engine.clientsCount);
-  io.sockets.connected[socket.id].emit("test",socket.id);
+  io.sockets.emit('socketCount',io.engine.clientsCount);
+  //io.sockets.connected[socket.id].emit("test",socket.id);
 
   //listOfSockets[socket.id] = {
   //  temp1 : "tempval1"
@@ -158,7 +164,7 @@ io.on('connection', function(socket){
 
   });
   socket.on('APIC info', function(url, username, password) {
-      console.log("apic info call");
+      //console.log("apic info call");
       var ticket_url = 'https://'+url+'/api/v1/ticket';
       get_ticket(ticket_url,username,password,e_ticket,socket.id);
       apicem_ip = url;
@@ -173,12 +179,13 @@ io.on('connection', function(socket){
 
   socket.on('disconnect', function(){
     console.log("Disconnect: "+socket.id);
+    io.sockets.emit('socketCount',io.engine.clientsCount);
     //delete listOfSockets[socket.id];
   });
 
 });
 
-});
+
 
 var port = Number(process.env.PORT || 3000);
 

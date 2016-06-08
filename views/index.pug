@@ -1,0 +1,215 @@
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css')
+  body
+    .container
+      ul.nav.nav-tabs
+        li.active
+          a(data-toggle='tab', href='#Authenticate') Authenticate
+        li
+          a(data-toggle='tab', href='#API') Send APIs
+      .tab-content
+        #Authenticate.tab-pane.fade.in.active
+          h3 Step 1: Authenticate
+          form#apic_info.form-horizontal(action='')
+            // <span class="label label-info">Step 1: Authenticate</span>
+            .form-group
+              label.col-sm-2.control-label(for='url') APIC-EM URL:port
+              .col-sm-10
+                input#url.form-control(type='text', autocapitalize='none', placeholder='ex: sandboxapic.cisco.com:9443', autocomplete='off')
+            .form-group
+              label.col-sm-2.control-label(for='username') Username:
+              .col-sm-10
+                input#username.form-control(type='text', autocapitalize='none', placeholder='ex: devnetuser', autocomplete='off')
+            .form-group
+              label.col-sm-2.control-label(for='password') Password:
+              .col-sm-10
+                input#password.form-control(type='password', placeholder='ex: Cisco123!', autocomplete='off')
+            .form-group
+              .col-sm-offset-2.col-sm-2
+                button.btn.btn-primary(type='submit') Authenticate
+              .col-sm-1
+                p or
+              .col-sm-1
+                button#sandbox.btn.btn-info(onclick='sendSandbox()', type='button') Use Sandbox
+        #API.tab-pane.fade
+          h3 Step 2: Send API calls to APIC-EM
+          form#send.form-horizontal(action='')
+            // <span class="label label-info">Step 2: Send API command</span>
+            .form-group
+              label.col-sm-2.control-label(for='api') Enter GET API.
+              .col-sm-10
+                input#m.form-control(autocomplete='off', placeholder='Example: for /api/v1/host just enter host')
+            .form-group
+              .col-sm-offset-2.col-sm-1
+                button.btn.btn-primary(type='submit') Send
+              .dropdown.col-sm-2
+                button.btn.btn-info.dropdown-toggle(type='button', data-toggle='dropdown')
+                  | Example API sends
+                  span.caret
+                ul.dropdown-menu
+                  li
+                    a(href='#', onclick='moveAPI(this.textContent)') host
+                  li
+                    a(href='#', onclick='moveAPI(this.textContent)') network-device
+                  li
+                    a(href='#', onclick='moveAPI(this.textContent)') network-device/config
+                  li
+                    a(href='#', onclick='moveAPI(this.textContent)') network-device/{deviceID}/config
+                  li
+                    a(href='#', onclick='moveAPI(this.textContent)') interface
+                  li
+                    a(href='#', onclick='moveAPI(this.textContent)') interface/network-device/{deviceID}
+                  li.divider
+                  li
+                    a(href='https://sandboxapic.cisco.com/swagger', target='_blank') List of APIs
+              .col-sm-2
+                .radio-inline
+                  label
+                    input#rawRadio(type='radio', name='optionsRadios', value='option1', checked='')
+                    |                   Raw JSON
+                .radio-inline
+                  label
+                    input#tableRadio(type='radio', name='optionsRadios', value='option2')
+                    |                     Table
+    .container-fluid
+      .col-lg-12
+    .container-fluid
+      .col-lg-7
+      .col-lg-2.col-lg-offset-3
+    .container-fluid
+      .col-lg-12
+        table#excelDataTable.table
+    pre#messages.
+    footer.navbar.navbar-fixed-bottom
+      .container-fluid
+        .col-lg-1.col-lg-offset-8.label.label-info
+          h5 Visitors:
+            span#socketCount
+        .col-lg-2
+          button.btn.btn-info(data-toggle='modal', data-target='#myModal') How does this work?
+    #myModal.modal.fade(role='dialog')
+      .modal-dialog
+        // Modal content
+        .modal-content
+          .modal-header
+            button.close(type='button', data-dismiss='modal') ×
+            h4.modal-title APIC-EM API example
+          .modal-body
+            p
+              | This application connects to any publicly accessible APIC-EM server and displays any network information
+              | via APIs.  View the source code in
+              a(href='https://github.com/jleatham/node-APIC-em-socket', target='_blank') Github
+            p
+            p
+              | On the backend, this server is running node.js (as opposed to apache) which allows for an increased
+              | number of users at a time.  Node.js is an asyncronous technology (read: non-blocking) that is used
+              | on some of the largest web applications (such as Netflix and Uber).  Read more at
+              a(href='https://nodejs.org/en/', target='_blank') nodejs.org
+            p
+            p Other technologies used are:
+            ul
+              li
+                a(href='http://socket.io/', target='_blank') Socket.io
+                |  : Allows for your browser to communicate back and forth to the server.  That way the server can safely handle all API calls as opposed to your browser.
+              li
+                a(href='https://jquery.com/', target='_blank') JQuery
+                |  : wide spread browser-based javascript library
+          .modal-footer
+            button.btn.btn-default(type='button', data-dismiss='modal') Close
+    script(src='/socket.io/socket.io.js')
+    // <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    // Latest compiled and minified CSS
+    // jQuery library
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js')
+    // Latest compiled JavaScript
+    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js')
+    script.
+      var socket = io();
+      $('#send').submit(function(){
+        socket.emit('GET api', $('#m').val());
+        //alert("emit sent");
+        $('#m').val('');
+        return false;
+        });
+      $('#apic_info').submit(function(){
+        socket.emit('APIC info', $('#url').val(), $('#username').val(), $('#password').val());
+        $('#url').val('');
+        $('#username').val('');
+        $('#password').val('');
+        return false;
+        });
+      function sendSandbox(){
+      socket.emit('APIC info', "sandboxapic.cisco.com:9443", "devnetuser", "Cisco123!");
+        //alert("emit sent");
+        return false;
+        };
+      socket.on('socketCount', function(data) {
+        $('#socketCount').html(data);
+        //alert("hello write back");
+        });
+      //socket.on('test', function(data) {
+        //$('#test').html(data);
+        //alert("hello write back");
+        //});
+      var myList = [];
+      socket.on('chat message', function(msg){
+        $("#excelDataTable").empty();
+        $("#messages").empty();
+        if (document.getElementById('tableRadio').checked){
+            //alert(msg);
+            myList = msg;
+            //alert(myList);
+            buildHtmlTable();
+          }
+        else {
+          //document.getElementById("messages").innerHTML = msg + "<br>";
+          document.getElementById("messages").innerHTML = JSON.stringify(msg, null, 4) + "<br>";
+          //document.getElementById("messages").innerHTML += JSON.stringify(msg, null, 4);
+          }
+        });
+      function moveAPI(api) {
+        document.getElementById("m").value=api;
+        }
+      function buildHtmlTable() {
+        //alert("in htmltablebuild");
+        var columns = addAllColumnHeaders(myList);
+        for (var i = 0 ; i < myList.length ; i++) {
+          var row$ = $('<tr/>');
+            for (var colIndex = 0 ; colIndex < columns.length ; colIndex++) {
+              var cellValue = myList[i][columns[colIndex]];
+              if (cellValue == null) { cellValue = ""; }
+                row$.append($('<td/>').html(cellValue));
+              }
+              $("#excelDataTable").append(row$);
+            }
+          }
+      // Adds a header row to the table and returns the set of columns.
+      // Need to do union of keys from all records as some records may not contain
+      // all records
+      function addAllColumnHeaders(myList)
+        {
+          //alert("in columnbuild");
+          var columnSet = [];
+          var headerTr$ = $('<tr/>');
+          for (var i = 0 ; i < myList.length ; i++) {
+            var rowHash = myList[i];
+              for (var key in rowHash) {
+                if ($.inArray(key, columnSet) == -1){
+                  columnSet.push(key);
+                  headerTr$.append($('<th/>').html(key));
+                }
+              }
+            }
+            $("#excelDataTable").append(headerTr$);
+            return columnSet;
+          }
+    script.
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+      ga('create', 'UA-78862113-1', 'auto');
+      ga('send', 'pageview');
