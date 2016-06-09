@@ -169,7 +169,7 @@ html
         //alert(msg);
         $("#excelDataTable").empty();
         $("#messages").empty();
-        if (msg.includes("authentication token")) {
+        if (msg.includes("authentication token") || msg.includes("API error")) {
           document.getElementById('rawRadio').checked = true;
           if (msg.includes("Success")){
             $('.nav-tabs a[href="#API"]').tab('show');
