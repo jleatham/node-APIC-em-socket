@@ -4,6 +4,15 @@ html
     title= title
     meta(name="viewport" content="width=device-width, initial-scale=1")
     link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css')
+    style.
+      table th, table td {
+        overflow: hidden;
+        white-space: nowrap;
+        max-width: 300px;
+      }
+      table tr{
+        height: 1em;
+      }
   body
     .container
       ul.nav.nav-tabs
@@ -87,7 +96,7 @@ html
     footer.navbar.navbar-fixed-bottom.row
       .col-sm-9
       .col-sm-1
-        button.btn.btn-info Visitors: 
+        button.btn.btn-info Visitors:&nbsp;
           span#socketCount
       .col-sm-2
         button.btn.btn-info(data-toggle='modal', data-target='#myModal') How does this work?
@@ -155,15 +164,21 @@ html
         //$('#test').html(data);
         //alert("hello write back");
         //});
-      var myList = [];
+      //var myList = [];
       socket.on('chat message', function(msg){
         $("#excelDataTable").empty();
         $("#messages").empty();
+        if (msg.includes("authentication token")) {
+          document.getElementById('rawRadio').checked = true;
+          if (msg.includes("Success")){
+            $('.nav-tabs a[href="#API"]').tab('show');
+          }
+        }
         if (document.getElementById('tableRadio').checked){
             //alert(msg);
-            myList = msg;
+            //myList = msg;
             //alert(myList);
-            buildHtmlTable();
+            buildHtmlTable(msg);
           }
         else {
           //document.getElementById("messages").innerHTML = msg + "<br>";
@@ -174,7 +189,7 @@ html
       function moveAPI(api) {
         document.getElementById("m").value=api;
         }
-      function buildHtmlTable() {
+      function buildHtmlTable(myList) {
         //alert("in htmltablebuild");
         var columns = addAllColumnHeaders(myList);
         for (var i = 0 ; i < myList.length ; i++) {
