@@ -2,6 +2,7 @@ doctype html
 html
   head
     title= title
+    meta(name="viewport" content="width=device-width, initial-scale=1")
     link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css')
   body
     .container
@@ -65,7 +66,7 @@ html
                   li.divider
                   li
                     a(href='https://sandboxapic.cisco.com/swagger', target='_blank') List of APIs
-              .col-sm-2
+              .col-sm-4
                 .radio-inline
                   label
                     input#rawRadio(type='radio', name='optionsRadios', value='option1', checked='')
@@ -75,21 +76,21 @@ html
                     input#tableRadio(type='radio', name='optionsRadios', value='option2')
                     |                     Table
     .container-fluid
-      .col-lg-12
+      .col-sm-12
     .container-fluid
-      .col-lg-7
-      .col-lg-2.col-lg-offset-3
+      .col-sm-7
+      .col-sm-2.col-sm-offset-3
     .container-fluid
-      .col-lg-12
+      .col-sm-12
         table#excelDataTable.table
     pre#messages.
-    footer.navbar.navbar-fixed-bottom
-      .container-fluid
-        .col-lg-1.col-lg-offset-8.label.label-info
-          h5 Visitors:
-            span#socketCount
-        .col-lg-2
-          button.btn.btn-info(data-toggle='modal', data-target='#myModal') How does this work?
+    footer.navbar.navbar-fixed-bottom.row
+      .col-sm-9
+      .col-sm-1
+        button.btn.btn-info Visitors: 
+          span#socketCount
+      .col-sm-2
+        button.btn.btn-info(data-toggle='modal', data-target='#myModal') How does this work?
     #myModal.modal.fade(role='dialog')
       .modal-dialog
         // Modal content
