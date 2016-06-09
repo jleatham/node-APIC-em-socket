@@ -58,7 +58,13 @@ json_response.on('update', function () {
     console.log("socketID = "+json_response.socketID);
     resp = json_response.info.response;
     //console.log("resp = "+ resp);
-    io.sockets.connected[json_response.socketID].emit('chat message', resp); //displays ticket in HTML page
+    if (resp){
+      io.sockets.connected[json_response.socketID].emit('chat message', resp); //displays ticket in HTML page
+    }
+    else{
+      io.sockets.connected[json_response.socketID].emit('chat message', "API error: No response"); //displays ticket in HTML page
+    }
+
 });
 
 function get_ticket(t_url,user,pswd,output,socketID) {
@@ -195,17 +201,17 @@ http.listen(port, function(){
 
 
 //console.log("jsonTest = "+jsonTest[1].socket);
-console.log("jsonSocket = "+jsonSocket[0].socket);
+//console.log("jsonSocket = "+jsonSocket[0].socket);
 //jsonSocket[0].socket = "jojo";
-console.log("jsonSocket = "+jsonSocket[0].socket);
+//console.log("jsonSocket = "+jsonSocket[0].socket);
 //console.log("jsonSocket = "+jsonSocket);
 
-for (var i in jsonSocket){
+//for (var i in jsonSocket){
   //console.log("i= "+jsonSocket[i].socket);
-  if (jsonSocket[i].socket === "jojo"){
-    console.log("deleting "+ JSON.stringify(jsonSocket[i]));
-    delete jsonSocket[i];
+  //if (jsonSocket[i].socket === "jojo"){
+    //console.log("deleting "+ JSON.stringify(jsonSocket[i]));
+    //delete jsonSocket[i];
 
-  }
-};
-console.log(JSON.stringify(jsonSocket));
+  //}
+//};
+//console.log(JSON.stringify(jsonSocket));

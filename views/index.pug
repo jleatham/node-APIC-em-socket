@@ -166,6 +166,7 @@ html
         //});
       //var myList = [];
       socket.on('chat message', function(msg){
+        //alert(msg);
         $("#excelDataTable").empty();
         $("#messages").empty();
         if (msg.includes("authentication token")) {
