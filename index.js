@@ -26,7 +26,7 @@ app.locals.serviceTicket = '';  //global nodejs variable for auth ticket
 
 var token ='';
 var jsonSocketTemp = '[' +
-  '{"socket":"","serviceTicket":"" }]';
+  '{"socket":"","serviceTicket":"","url":"" }]';
 var jsonSocket = JSON.parse(jsonSocketTemp);
 setInterval(function(){
     jsonSocket = JSON.parse(jsonSocketTemp);
@@ -41,13 +41,28 @@ e_ticket.on('update', function () {
       console.log(serviceTicket);
       //io.emit('chat message', "Success, authentication token: "+ serviceTicket); //displays ticket in HTML page
       io.sockets.connected[e_ticket.socketID].emit('chat message', "Success, authentication token: "+ serviceTicket);
-      jsonSocket.push({"socket":e_ticket.socketID,"serviceTicket":serviceTicket });
+      jsonSocket.push({"socket":e_ticket.socketID,"serviceTicket":serviceTicket,"url":e_ticket.url });
       console.log(JSON.stringify(jsonSocket));
     }
     else{
       console.log("error");
       //console.log(serviceTicket);
-      io.sockets.connected[e_ticket.socketID].emit('chat message', "Error in authentication token. Try again."); //displays ticket in HTML page
+      if (e_ticket.error) {
+        io.sockets.connected[e_ticket.socketID].emit('chat message', "Response: "+e_ticket.error); //displays ticket in HTML page
+        console.log("in e_ticket.error");
+        e_ticket.error = "";
+      }
+      else if (e_ticket.response) {
+        //resp = e_ticket.response.body;
+        io.sockets.connected[e_ticket.socketID].emit('chat message', e_ticket.response); //displays ticket in HTML page
+        console.log("in e_ticket.response");
+        console.log(e_ticket.response);
+        e_ticket.respons = "";
+      }
+      else {
+        io.sockets.connected[e_ticket.socketID].emit('chat message', "Error in authentication token. Try again."); //displays ticket in HTML page
+        console.log("in default error");
+      }
     }
 
 });
@@ -67,8 +82,9 @@ json_response.on('update', function () {
 
 });
 
-function get_ticket(t_url,user,pswd,output,socketID) {
+function get_ticket(apic_url,t_url,user,pswd,output,socketID) {
      var options = {
+        "rejectUnauthorized": false,
          url: t_url,
           headers: {
            'Content-type': 'application/json'
@@ -85,14 +101,26 @@ function get_ticket(t_url,user,pswd,output,socketID) {
            // output is defined as e_ticket during function call
            output.info = (JSON.parse(body));
            output.socketID = socketID;
+           output.url = apic_url;
            output.emit('update');
            console.log("get_ticket API success");
       }
        else {
            //console.log(response.statusCode);
            console.log("inside callback POST ticket error");
-           //console.log(JSON.parse(body));
+           //console.log(response);
+
            output.info = "ERROR";
+           if (response) {
+             output.response = response.body;
+             console.log(JSON.stringify(response));
+           }
+           else if (error) {
+             output.error = error;
+             console.log(error);
+           }
+
+
            output.socketID = socketID;
            output.emit('update');
        } //end of outer if
@@ -103,6 +131,7 @@ function get_ticket(t_url,user,pswd,output,socketID) {
 var getJSON = function(api_url,output,socketID,sTicket){
   //console.log("In getJSON");
   var options = {
+    "rejectUnauthorized": false,
     url: api_url,
     method: "GET",
     headers: {
@@ -122,8 +151,8 @@ var getJSON = function(api_url,output,socketID,sTicket){
       output.info = "API error";
       output.socketID = socketID;
       output.emit('update');
-      //console.log(error);
-      //console.log(response);
+      console.log(JSON.stringify(error));
+      console.log(error);
       //console.log(body);
       //console.log(JSON.parse(body));
 
@@ -155,12 +184,13 @@ io.on('connection', function(socket){
   //console.log("listOfSockets= "+listOfSockets);
   socket.on('GET api', function(msg){
             var tempTick = "";
-            api_url = 'https://'+apicem_ip+'/api/v1/'+msg;
+            api_url = "";
             for (var i in jsonSocket){
               //console.log("i= "+jsonSocket[i].socket);
               if (jsonSocket[i].socket === socket.id){
                 console.log("test ticket for socket: "+ jsonSocket[i].serviceTicket);
                 tempTick = jsonSocket[i].serviceTicket;
+                api_url = 'https://'+jsonSocket[i].url+'/api/v1/'+msg;
               }
             };
             getJSON(api_url,json_response,socket.id,tempTick);
@@ -172,8 +202,8 @@ io.on('connection', function(socket){
   socket.on('APIC info', function(url, username, password) {
       //console.log("apic info call");
       var ticket_url = 'https://'+url+'/api/v1/ticket';
-      get_ticket(ticket_url,username,password,e_ticket,socket.id);
-      apicem_ip = url;
+      get_ticket(url,ticket_url,username,password,e_ticket,socket.id);
+      //apicem_ip = url;
       //apicem_user = username;
       //apicem_pass = password;
          console.log(url);
