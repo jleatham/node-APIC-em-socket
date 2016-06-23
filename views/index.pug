@@ -28,7 +28,7 @@ html
             .form-group
               label.col-sm-2.control-label(for='url') APIC-EM URL:port
               .col-sm-10
-                input#url.form-control(type='text', autocapitalize='none', placeholder='ex: sandboxapic.cisco.com:9443', autocomplete='off')
+                input#url.form-control(type='text', autocapitalize='none', placeholder='ex: sandboxapic.cisco.com', autocomplete='off')
             .form-group
               label.col-sm-2.control-label(for='username') Username:
               .col-sm-10
@@ -152,7 +152,7 @@ html
         return false;
         });
       function sendSandbox(){
-      socket.emit('APIC info', "sandboxapic.cisco.com:9443", "devnetuser", "Cisco123!");
+      socket.emit('APIC info', "sandboxapic.cisco.com", "devnetuser", "Cisco123!");
         //alert("emit sent");
         return false;
         };
